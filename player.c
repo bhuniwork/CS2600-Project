@@ -9,7 +9,7 @@ void fillPlayerItemsPlaceholderValues(player* player){
 	}
 }
 
-//This is essentially a default constructor. Call this function when you create a player object
+//This is essentially a default constructor. Call this function when you create a player object.
 void playerDefaultConfiguration(player* player) {
 	player->playerHealth = 50;
 	player->index=0;
