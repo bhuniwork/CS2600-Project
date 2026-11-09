@@ -97,13 +97,63 @@ Items getRandomItem()
     if (choice == 2)
     {
         bool weaponType = rand() % 2;
-        Weapon newWeapon = {weaponType, rand() % 20 + 10, rand() % 2, rand() % 10, false, 0};
-        Items newItem = {newWeapon, {}, {}, ""};
-        randomWeaponName(weaponType, newItem.name, sizeof(newItem.name));
-        return newItem;
+
     }
 
     return healingItems[item];
+}
+
+Items getRandomWeapon()
+{
+    int choice = rand() % 2;
+
+    Weapon newWeapon = {choice, rand() % 20 + 10, rand() % 2, rand() % 10, false, 0};
+    Items newItem = {newWeapon, {}, {}, ""};
+    randomWeaponName(choice, newItem.name, sizeof(newItem.name));
+
+    if (choice == 0)
+    {
+        return newItem;
+    } else if (choice == 1)
+    {
+        Weapon newWeapon = {choice, rand() % 20 + 10, rand() % 2, rand() % 10, false, 0};
+        Items newItem = {newWeapon, {}, {}, ""};
+        randomWeaponName(choice, newItem.name, sizeof(newItem.name));
+        return newItem;
+    }
+
+    return newItem;
+}
+
+Items getRandomHealingItem()
+{
+    int choice = rand() % 6;
+
+    // List of healing items
+    Items healingItems[5] = {
+        {{}, {false, 20, 1}, {}, "Fizzy Pop"},            // Fizzy Pop
+        {{}, {true, 5, 5}, {}, "Suspicious Slop"},        // Suspicious Slop
+        {{}, {false, 50, 1}, {},  "Gummy Bears"},         // Gummy Bears
+        {{}, {true, -10, 3}, {}, "Radioactive Sludge"},   // Radioactive Sludge
+        {{}, {false, 30, 1}, {}, "Stale Crackers"}        // Stale Crackers
+    };
+
+    return healingItems[choice];
+}
+
+Items getRandomBuffingItem()
+{
+    int choice = rand() % 6;
+
+    Items buffingItems[5] = {
+        {{}, {}, {1, 0, 30, 3}, "HealUp"},            // HealUp
+        {{}, {}, {2, 0.5, 0, 2}, "Punchdown Punch"},  // Punchdown Punch
+        {{}, {}, {1, 10, 10, 3}, "Envigor-Aid"},      // Envigor-Aid
+        {{}, {}, {2, 0, 0.25, 5}, "Herbal Salve"},    // Herbal Salve
+        {{}, {}, {2, 0.2, 0.2, 4}, "Ranch"}           // Ranch
+    };
+
+    return buffingItems[choice];
 }
 
 
