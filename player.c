@@ -12,20 +12,20 @@ void fillPlayerItemsPlaceholderValues(player* player){
 //This is essentially a default constructor. Call this function when you create a player object.
 
 void playerDefaultConfiguration(player* player) {
-	player->playerHealth = 50.00;
+	player->playerHealth = 50;
 	player->index=0;
-	player->playerDamage = 30.00;
+	player->playerDamage = 30;
 	player->playerWeapon = "undefined";
 	fillPlayerItemsPlaceholderValues(player);
 }
 
 //Gets the player's health.
-float getPlayerHealth(player* player){
+int getPlayerHealth(player* player){
 	return player->playerHealth;
 }
 
 //Allows to change the player's health
-void setPlayerHealth(player* player, float hp){
+void setPlayerHealth(player* player, int hp){
 	player->playerHealth = hp;
 }
 
@@ -35,12 +35,12 @@ int getIndex(player* player){
    }
 
 //Get how much damage the player can inflict on the enemy
-float getPlayerDamage(player* player) {
+int getPlayerDamage(player* player) {
 	return player->playerDamage;
 }
 
 //Change how much damage a player can deal.
-void setPlayerDamage(player* player, float damage){
+void setPlayerDamage(player* player, int  damage){
 	player->playerDamage = damage;
 }
 
