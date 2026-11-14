@@ -5,8 +5,8 @@
 
 //Defines fields such as the player's health, damage, weapon, and the player's item. Index is used to indicate the next index in the array to put a player item in
 typedef struct player {
-    int playerHealth;
-    int playerDamage;
+    int  playerHealth;
+    int  playerDamage;
     int index;
     char *playerWeapon;
     char *playerItems[MAX_ITEMS];

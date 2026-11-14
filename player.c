@@ -40,7 +40,7 @@ int getPlayerDamage(player* player) {
 }
 
 //Change how much damage a player can deal.
-void setPlayerDamage(player* player, int damage){
+void setPlayerDamage(player* player, int  damage){
 	player->playerDamage = damage;
 }
 
