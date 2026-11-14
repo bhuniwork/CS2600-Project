@@ -3,7 +3,10 @@
 #include "player.h"
 typedef struct {
   char * name;
+  // health measure the CURRENT health of the enemy. Does NOT have to be equal to maxHealth
   int health;
+  // maxHealth measures the total health of the enemy
+  int maxHealth;
   // This measures HOW MUCH damage an enemy can deal to a player
   // (Ex: if damage was the integer 5, an enemy can deal 5 damage to the player.)
   int damage;
@@ -12,7 +15,8 @@ typedef struct {
 
 typedef struct {
   Enemy boss;
-  float bounty;
+  int bounty;
+  int specialDamage;
 } Boss;
 
 char *getName(Enemy *self) {
@@ -37,12 +41,20 @@ bool isDefeated(Enemy *self) {
   return self->health == 0;
 }
 
+void resetHealth(Enemy *self) {
+  self->health = self->maxHealth;
+
+}
+
 int main() {
   // main is used for TESTING only
   Enemy grunt = {.name = "James", .health = 0, .damage = 4, .type="Grunt"};
 
-  
-  printf("%s\n\n", getName(&grunt));
-  printf("%d\n\n", isDefeated(&grunt));
+  // Initializes enemy with certain maxHealth.
+  // Then, it gives the enemy full health to begin with
+  grunt.maxHealth = 55;
+  grunt.health = grunt.maxHealth;
+  printf("%d\n\n", getHealth(&grunt));
+  resetHealth(&grunt);
   return 0;
 }
