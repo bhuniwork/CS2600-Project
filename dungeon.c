@@ -1,8 +1,7 @@
-#include dungeon.h
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "dungeon.h"
 
 int x = 0;
 int y = 0;
