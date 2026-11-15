@@ -16,7 +16,7 @@ typedef struct
 typedef struct
 {
     bool healOverTime;          // does this item heal over time? T/F
-    double healingAmount;        // flat healing amount, to be modified by buffs
+    int healingAmount;        // flat healing amount, to be modified by buffs
     int duration;               // in turns
 } HealingItem;
 
@@ -24,8 +24,8 @@ typedef struct
 typedef struct
 {
     int buffType;               // buff is additive or multiplicative
-    double damageBuff;           // damage buff by how much
-    double healingBuff;          // healing buff by how much
+    int damageBuff;           // damage buff by how much
+    int healingBuff;          // healing buff by how much
     int duration;               // in turns
 } BuffingItem;
 
