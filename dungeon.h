@@ -39,3 +39,5 @@ int playerX; - gives the center X of the player in the dungeon
 int playerY; - gives the center Y of the player in the dungeon
 bool hitWall; - returns true if player hits '#' character.
 */
+
+#endif
