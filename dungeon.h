@@ -10,6 +10,7 @@ int positionY() - returns a random position Y
 void initializeDungeon() - returns a 2D array of blank spaces and a border
 void printDungeon() - returns a dungeon with randomized item, walls, enemies, and centered player
 int main() - TEST function, 
+void playerControl(char key) - method determines player movement, where movement is represented by "WASD" and returns a dungeon with that new movement modification. Key represents WASD
 
 
 Local variables
