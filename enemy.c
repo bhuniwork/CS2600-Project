@@ -47,7 +47,7 @@ char *getType(Enemy *self) {
 // This method checks if an enemy's health is 0.
 bool isDefeated(Enemy *self) {
   // REMEMBER: a returned value of 0 means FALSE while 1 MEANS TRUE.
-  return self->health == 0;
+  return self->health <= 0;
 }
 
 void resetHealth(Enemy *self) {
@@ -55,15 +55,32 @@ void resetHealth(Enemy *self) {
 
 }
 
+// from player.h class
+int getPlayerHealth(player *user);
+
+
+// ________________________________________
+void dealDamage(Enemy *self, player *user) {
+  int damage = getDamage(self);
+  void setPlayerHealth(player *user, int hp);
+
+  // to CHECK if dealing damage will result in the player going below 0 health.
+  if (getPlayerHealth(user) - damage < 0) {
+    setPlayerHealth(user, 0);
+  }
+  else {
+   setPlayerHealth(user, getPlayerHealth(user) - damage); 
+  }
+}
+
 int main() {
   // main is used for TESTING only
-  Enemy grunt = {.name = "James", .health = 0, .damage = 4, .type="Grunt"};
+  Enemy grunt = {.name = "James", .health = 0, .damage = 80, .type="Grunt"};
+  player p = {.playerHealth = 100, .playerDamage = 20, .index=0};
 
-  // Initializes enemy with certain maxHealth.
-  // Then, it gives the enemy full health to begin with
-  grunt.maxHealth = 55;
-  grunt.health = grunt.maxHealth;
-  printf("%d\n\n", getHealth(&grunt));
-  resetHealth(&grunt);
+  dealDamage(&grunt, &p);
+  printf("Player Health after taking damage: %d", p.playerHealth);
+  dealDamage(&grunt, &p);
+  printf("Player Health after taking damage: %d", p.playerHealth);
   return 0;
 }
