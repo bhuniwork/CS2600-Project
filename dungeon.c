@@ -48,9 +48,9 @@ void initializeDungeon(){
         int numberCountItem = 0;
         char enemy = 'e';
         char itemP = '@';
+    
         //putting player for now until classes for player comes.
         //char enemies_bosses[3][10] = {"G3CK13","D0NC1C","K31THL3Y"}; //bosses holds 3 bosses, up to 10 characters characters MAX
-        //char enemies_generic = 'e';
         //char enemies_Boss = 'B';
         
 
@@ -196,3 +196,4 @@ int main()
 
     return 0;
 */
+
