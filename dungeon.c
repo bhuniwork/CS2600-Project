@@ -169,6 +169,7 @@ void playerControl(char key){
 
 }
 
+/*
 int main()
 {
     
@@ -194,3 +195,4 @@ int main()
     }
 
     return 0;
+*/
