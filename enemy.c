@@ -23,10 +23,14 @@ typedef struct {
 } Enemy;
 
 typedef struct {
-  Enemy boss;
+  Enemy eStats;
   int bounty;
   int specialDamage;
 } Boss;
+
+int getSpecialAttack(Boss *self) {
+  return self->specialDamage;
+}
 
 char *getName(Enemy *self) {
   return self->name;
@@ -73,14 +77,35 @@ void dealDamage(Enemy *self, player *user) {
   }
 }
 
+// THIS IS FOR bosses ONLY!
+void dealSpecialAttack(Boss *self, player *user) {
+  int damage = getSpecialAttack(self);
+  void setPlayerHealth(player *user, int hp);
+
+  // to CHECK if dealing damage will result in the player going below 0 health.
+  if (getPlayerHealth(user) - damage < 0) {
+    setPlayerHealth(user, 0);
+  }
+  else {
+   setPlayerHealth(user, getPlayerHealth(user) - damage); 
+  }
+}
 int main() {
   // main is used for TESTING only
   Enemy grunt = {.name = "James", .health = 0, .damage = 80, .type="Grunt"};
   player p = {.playerHealth = 100, .playerDamage = 20, .index=0};
 
-  dealDamage(&grunt, &p);
-  printf("Player Health after taking damage: %d", p.playerHealth);
-  dealDamage(&grunt, &p);
-  printf("Player Health after taking damage: %d", p.playerHealth);
+  Enemy gk = {.name = "G3CKL13", .health = 150, .damage = 5, .type="Poison & Electric"}; 
+  Boss a = {.eStats = gk, .bounty = 10000, .specialDamage = 45};
+
+  printf("Health of player: %d\n", p.playerHealth);
+  dealSpecialAttack(&a, &p);
+  printf("Health of player: %d\n", p.playerHealth);
+  dealSpecialAttack(&a, &p);
+  printf("Health of player: %d\n", p.playerHealth);
+  dealSpecialAttack(&a, &p);
+  printf("Health of player: %d\n", p.playerHealth);
+  dealSpecialAttack(&a, &p);
+  printf("Health of player: %d\n", p.playerHealth);
   return 0;
 }
