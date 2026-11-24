@@ -19,12 +19,12 @@ char dungeon_platform[12][12];
 int health = 3;
 bool hitWall = false;
 
-// will become important in regards to moving things.
+// will become important regarding moving things. (Center of dungeon coordinates)
 int playerX = 6;
 int playerY = 6;
             
 
-// characters
+// character positions ONLY
 
 int positionX(){
     
@@ -49,14 +49,13 @@ void initializeDungeon(){
         char enemy = 'e';
         char itemP = '@';
     
-        //putting player for now until classes for player comes.
         //char enemies_bosses[3][10] = {"G3CK13","D0NC1C","K31THL3Y"}; //bosses holds 3 bosses, up to 10 characters characters MAX
         //char enemies_Boss = 'B';
         
 
         //initialize the blank 2d array
 
-        //will intitialize a full blank dungeon.
+        //will initialize a full blank dungeon.
         for (int r = 0; r < 12; r++){
             for (int c = 0; c < 12; c++){
                 if(r == 0 || r == 11 || c == 0 || c == 11){
@@ -163,8 +162,11 @@ void playerControl(char key){
         playerY = tempRow;
         playerX = tempCol;
         dungeon_platform[playerX][playerY] = 'P';
+        
     } else {
-        printf("Hit a wall!");
+        
+        printf("\nHit a wall!");
+        
     }
 
 }
@@ -196,4 +198,5 @@ int main()
 
     return 0;
 */
+
 
