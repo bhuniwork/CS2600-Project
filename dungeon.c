@@ -6,11 +6,15 @@ Group 2:
     Logan Quon
     Derrehn Robles
 */
-
+#define MINIAUDIO_IMPLEMENTATION
+#include "miniaudio.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "dungeon.h"
+
+// Define the audio engine (Implemented by Derrehn)
+ma_engine engine;
 
 int x = 0;
 int y = 0;
@@ -18,22 +22,18 @@ int y = 0;
 char dungeon_platform[12][12];
 int health = 3;
 bool hitWall = false;
-
-// will become important regarding moving things. (Center of dungeon coordinates)
-int playerX = 6;
-int playerY = 6;
             
 
 // character positions ONLY
 
 int positionX(){
     
-   return rand() % 11;
+   return (rand() % 10) + 1;
 }
 
 int positionY(){
     
-   return rand() % 11;
+   return (rand() % 10) + 1;
 }
 
 
@@ -44,10 +44,9 @@ void initializeDungeon(){
         char blank_space = '.';
         char wall = '#';
         char player = 'P'; 
-        int numberCount = 0;
-        int numberCountItem = 0;
         char enemy = 'e';
-        char itemP = '@';
+        char item = '$';
+        
     
         //char enemies_bosses[3][10] = {"G3CK13","D0NC1C","K31THL3Y"}; //bosses holds 3 bosses, up to 10 characters characters MAX
         //char enemies_Boss = 'B';
@@ -60,72 +59,76 @@ void initializeDungeon(){
             for (int c = 0; c < 12; c++){
                 if(r == 0 || r == 11 || c == 0 || c == 11){
                     dungeon_platform[r][c] = wall;
-                    
-                    }else{
+                    } else {
                     dungeon_platform[r][c] = blank_space;
+                    }
                 }
             }
-        }
+
+         dungeon_platform[10][11] = blank_space;
+
+         playerX = 6;
+         playerY = 6;
+         dungeon_platform[playerX][playerY] = player;
         
-        // vertical walls
-        for (int r = 3; r <=7; r++){
-            dungeon_platform[r][3] = wall;
-            dungeon_platform[r][8] = wall;
-            
-            }
-            
-                        
-        //spawns enemies in the dungeon
+        // NON-Randomized spawns start here, beware for mess!
+//------------------------------------------------------------------------------------
+        //Vertical walls in the dungeon (longer than 2)
+         for (int r = 0; r <= 2; r++){
+            dungeon_platform[r][2] = wall;
+         }
          
-        while (numberCount < 4){
-            bool enemyInSameRow = false;
-            bool isBlankSpace = false;
-            
-            int randomX = (rand() % 10) + 1;
-            int randomY = (rand() % 10) + 1;
+         for (int r = 0; r <=2 ; r++){
+            dungeon_platform[r][5] = wall;
+         }
+
+          for (int r = 4; r <= 6; r++){
+            dungeon_platform[r][8] = wall;
+         }
+
+         //Single walls + diagonal wall
         
-            if(dungeon_platform[randomX][randomY] == blank_space) {
-                isBlankSpace = true;
-                    }
-            
-            for (int c = 0; c < 12; c++){
-                if (dungeon_platform[randomX][c] == enemy){
-                        enemyInSameRow = true;
-                    }
-            }    
-            
-                if (enemyInSameRow == false && isBlankSpace == true){
-                    dungeon_platform[randomX][randomY] = enemy;
-                    numberCount++;
-                    }
-                }
-                
-                
-        while (numberCountItem < 3){
-            bool itemsInSameRow = false;
-            bool isBlankSpace = false;
-            
-            int randomX = (rand() % 10) + 1;
-            int randomY = (rand() % 10) + 1;
-        
-            if(dungeon_platform[randomX][randomY] == blank_space) {
-                isBlankSpace = true;
-                    }
-            
-            for (int c = 0; c < 12; c++){
-                if (dungeon_platform[randomX][c] == itemP){
-                        itemsInSameRow = true;
-                    }
-            }    
-            
-                if (itemsInSameRow == false && isBlankSpace == true){
-                    dungeon_platform[randomX][randomY] = itemP;
-                    numberCountItem++;
-                    }
-                }
-        dungeon_platform[playerX][playerY] = player;
+        dungeon_platform[3][3] = wall;
+        dungeon_platform[10][7] = wall;
+        dungeon_platform[10][9] = wall;
+        dungeon_platform[1][7] = wall;
+        dungeon_platform[10][5] = wall;
+        dungeon_platform[6][10] = wall;
+
+        //diagonals are assigned
+        for (int i = 0; i < 3; i++){
+            dungeon_platform[5+i][4-i] = wall;
+        }
+
+        //horizontal walls
+        for (int c = 7; c <= 10; c++) {
+            dungeon_platform[8][c] = wall;
+        }
+
+        for (int c = 2; c <= 4; c++) {
+            dungeon_platform[9][c] = wall;
+        }
+//------------------------------------------------------------------------------
+//enemies and items spawn, refered to item and enemy classes
+
+//enemy spawnPoints
+dungeon_platform[2][1] = enemy;
+dungeon_platform[2][9] = enemy;
+dungeon_platform[3][4] = enemy;
+dungeon_platform[7][5] = enemy;
+dungeon_platform[9][7] = enemy;
+
+//item spawnPoints
+dungeon_platform[1][1] = item;
+dungeon_platform[1][6] = item;
+dungeon_platform[5][10] = item;
+dungeon_platform[10][8] = item;
+dungeon_platform[10][6] = item;
+
 }
 
+
+//------------------------------------------------------------------------------
 void printDungeon(){
     
     printf("\n");
@@ -139,64 +142,47 @@ void printDungeon(){
             
     printf("\n Health: %d, Class: Player(filler)\n Your next Move?", health);
 }
-        
 
+
+//-------------------------------------------------------------------------------
 void playerControl(char key){
     
-    int tempRow = playerY;
-    int tempCol = playerX;
+    int tempRow = playerX;
+    int tempCol = playerY;
     
-    if (key == 'A'){
+    if (key == 'W' || key == 'w'){
+        ma_engine_play_sound(&engine, "SoundClips/foley_footstep_concrete_1.wav", NULL);
         tempRow--;
-    } else if (key == 'W'){
+    } else if (key == 'A' || key == 'a'){
+        ma_engine_play_sound(&engine, "SoundClips/foley_footstep_vinyl_4.wav", NULL);
         tempCol--;
-    } else if (key == 'D'){
+    } else if (key == 'S' || key == 's'){
+        ma_engine_play_sound(&engine, "SoundClips/foley_footstep_concrete_1.wav", NULL);
         tempRow++;
-    } else if (key == 'S'){
+    } else if (key == 'D' || key == 'd'){
+        ma_engine_play_sound(&engine, "SoundClips/foley_footstep_vinyl_4.wav", NULL);
         tempCol++;
+    } else {
+        return;
     }
     
-    if (dungeon_platform[tempRow][tempCol] != '#'){
+    //Player movement here (Centered)
+    if (dungeon_platform[tempRow][tempCol] != '#' && dungeon_platform[tempRow][tempCol] != 'e'){
         
         dungeon_platform[playerX][playerY] = '.';
-        playerY = tempRow;
-        playerX = tempCol;
+        playerX = tempRow;
+        playerY = tempCol;
         dungeon_platform[playerX][playerY] = 'P';
+
+    } else if (dungeon_platform[tempRow][tempCol] == '#'){
         
-    } else {
-        
-        printf("\nHit a wall!");
+        ma_engine_play_sound(&engine, "SoundClips/foley_footstep_vinyl_3.wav", NULL);
+        printf("\n!!Hit a wall!!\n");
         
     }
 
 }
 
-/*
-int main()
-{
-    
-    char stop;
-    
-    initializeDungeon();
-    printDungeon();
-    
-    while (true)
-    {
-        printf("\nTEST: press q to quit: (HOLD SHIFT THEN WASD)");
-        scanf(" %c", &stop);
-    
-        if (stop != 'q') {
-        
-        playerControl(stop);
-        printDungeon();
-        } else {
-        
-        break;
-        
-        }
-    }
 
-    return 0;
-*/
 
 
