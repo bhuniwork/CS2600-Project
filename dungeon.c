@@ -140,7 +140,7 @@ void printDungeon(){
         printf("\n");
         }
             
-    printf("\n Health: %d, Class: Player(filler)\n Your next Move?", health);
+    printf("---------------------\n");
 }
 
 
@@ -182,7 +182,3 @@ void playerControl(char key){
     }
 
 }
-
-
-
-
