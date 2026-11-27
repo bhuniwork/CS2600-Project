@@ -9,8 +9,8 @@ typedef struct player {
     int  playerHealth;
     int  playerDamage;
     int index;
-    Items *playerWeapon;
-    Items *playerItems[MAX_ITEMS];
+    Items playerWeapon;
+    Items playerItems[MAX_ITEMS];
 }player;
 
 //These function definitions define the functions that will be used in player.c. These will be described more in detail within player.c alongside their implementation
@@ -23,10 +23,10 @@ int getPlayerDamage(player *player);
 void setPlayerDamage(player *player, int damage);
 
 Items *getPlayerWeapon(player *player);
-void setPlayerWeapon(player *player, Items *item);
+void setPlayerWeapon(player *player, Items item);
 
 int getIndex(player *player);
-void addPlayerItem(player *player, Items *item);
+void addPlayerItem(player *player, Items item);
 void removePlayerItem(player *player, Items *item);
 void displayPlayerItems(player *player);
 

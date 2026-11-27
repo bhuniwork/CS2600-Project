@@ -1,5 +1,7 @@
 #ifndef ITEMS
 #define ITEMS
+#include <stdbool.h>
+#include <stddef.h>
 
 // Weapon struct
 typedef struct

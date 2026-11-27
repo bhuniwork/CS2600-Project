@@ -55,6 +55,7 @@ void resetHealth(Enemy *self) {
 
 }
 
+/*
 int main() {
   // main is used for TESTING only
   Enemy grunt = {.name = "James", .health = 0, .damage = 4, .type="Grunt"};
@@ -67,3 +68,4 @@ int main() {
   resetHealth(&grunt);
   return 0;
 }
+*/

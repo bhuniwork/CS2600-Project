@@ -12,21 +12,22 @@ Group 2:
 #include "player.h"
 #include "Items.h"
 
+static const Items placeholderItem = { .name = "Placeholder" };
+static const Items placeholderWeapon = { .name = "Undefined" };
+
 //Fills the array with a placeholder value. This will be used as an indicator that a specific element of the array has no items for the player to use.
 void fillPlayerItemsPlaceholderValues(player* player) {
-	Items item = {{}, {}, {}, "Placeholder"};
-	for(int i = 0 ; i<100 ; i++) {
-		player->playerItems[i] = &item;
+	for(int i = 0 ; i<MAX_ITEMS ; i++) {
+		player->playerItems[i] = placeholderItem;
 	}
 }
 
 //This is essentially a default constructor. Call this function when you create a player object.
 void playerDefaultConfiguration(player* player) {
-	Items weaponPlaceholder = {};
 	player->playerHealth = 50;
 	player->index=0;
 	player->playerDamage = 30;
-	player->playerWeapon = weaponPlaceholder;
+	player->playerWeapon = placeholderWeapon;
 	fillPlayerItemsPlaceholderValues(player);
 }
 
@@ -57,16 +58,16 @@ void setPlayerDamage(player* player, int  damage){
 
 //Get the weapon that player currently possesses.
 Items *getPlayerWeapon(player* player) {
-	return player->playerWeapon;
+	return &player->playerWeapon;
 }
 
 //Set or change the weapon the player has.
-void setPlayerWeapon(player* player, Items *item){
+void setPlayerWeapon(player* player, Items item){
 	player->playerWeapon = item;
 }
 
 //Add a player item, such as a healing item, to the player's inventory(array)
-void addPlayerItem(player* player, Items *item){
+void addPlayerItem(player* player, Items item){
 	if(player->index >= MAX_ITEMS) {
 		return;
 	}
@@ -77,8 +78,8 @@ void addPlayerItem(player* player, Items *item){
 //Displays the items in the player items array, excluding any placeholder items
 void displayPlayerItems(player* player){
 	for(int i = 0 ; i < player->index ; i++){
-		if(strcmp(player->playerItems[i]->name, "Placeholder") != 0) {
-                   printf("%s\n" , player->playerItems[i]->name);
+		if(strcmp(player->playerItems[i].name, "Placeholder") != 0) {
+                   printf("%s\n" , player->playerItems[i].name);
 	     } else {
 	      continue;
 	     }
@@ -86,10 +87,10 @@ void displayPlayerItems(player* player){
 }
 
 //Removes a specified player item in the player item array and replaces it with a placeholder item
-void removePlayerItem(player* player, Items item) {
+void removePlayerItem(player* player, Items *item) {
 	for(int i = 0 ; i < player->index ; i++) {
-		if(strcmp(player->playerItems[i]->name, item.name) == 0) {
-		     player->playerItems[i]->name = "Placeholder";
+		if(strcmp(player->playerItems[i].name, item->name) == 0) {
+		     player->playerItems[i] = placeholderItem;
 		     break;
 		}
 	}

@@ -97,7 +97,7 @@ Items getRandomWeapon()
 
 Items getRandomHealingItem()
 {
-    int choice = rand() % 6;
+    int choice = rand() % 5;
 
     // List of healing items
     Items healingItems[5] = {
@@ -113,7 +113,7 @@ Items getRandomHealingItem()
 
 Items getRandomBuffingItem()
 {
-    int choice = rand() % 6;
+    int choice = rand() % 5;
 
     Items buffingItems[5] = {
         {{}, {}, {1, 0, 30, 3}, "HealUp"},            // HealUp
@@ -143,7 +143,6 @@ Items getRandomItem()
 
     if (choice == 2)
     {
-        Items newItem = getRandomItem();
-        return newItem;
+        getRandomWeapon();
     }
 }

@@ -1,18 +1,20 @@
 #ifndef DUNGEON
 #define DUNGEON
 
+#include <stdbool.h>
 
+bool initializeAudio(void);
+void shutdownAudio(void);
 
 
 //Method Headers
-int positionX(); //- returns a random position X
-int positionY(); //- returns a random position Y
-void initializeDungeon(); //- returns a 2D array of blank spaces and a border
-void printDungeon(); //- returns a dungeon with randomized item, walls, enemies, and centered player
-int main(); //- TEST function, 
+int positionX(void); //- returns a random position X
+int positionY(void); //- returns a random position Y
+void initializeDungeon(void); //- returns a 2D array of blank spaces and a border
+void printDungeon(void); //- returns a dungeon with randomized item, walls, enemies, and centered player
 void playerControl(char key); //- method determines player movement, where movement is represented by "WASD" and returns a dungeon with that new movement modification. Key represents WASD
 
-
+/*
 //Local variables
 char blank_space; //- black space character in dungeon
 char wall; //- wall character in dungeon
@@ -30,14 +32,15 @@ int randomY; //- (for ENEMY) returns a random coordinate Y in (rand() % 10) + 1;
 bool itemsInSameRow; //- returns true if another item character is in the same row
 int tempRow; //- temporary row, allows for movement in dungeon.
 int tempCol; //- temporary column, allows for movement in dungeon.
-char key; //- 'WASD" representation
+char key; //- 'WASD representation
 char stop; //- TESTS function, kills game
+*/
 
 //Global Variables
-char dungeon_platform[12][12]; //- 2d array representing the GRID of dungeon (Empty)
-int health; //- Health of the player (initial: 100, subject to change)
-int playerX; //- gives the center X of the player in the dungeon
-int playerY; //- gives the center Y of the player in the dungeon
-bool hitWall; //- returns true if player hits '#' character.
+extern char dungeon_platform[12][12]; //- 2d array representing the GRID of dungeon (Empty)
+extern int health; //- Health of the player (initial: 100, subject to change)
+extern int playerX; //- gives the center X of the player in the dungeon
+extern int playerY; //- gives the center Y of the player in the dungeon
+extern bool hitWall; //- returns true if player hits '#' character.
 
 #endif

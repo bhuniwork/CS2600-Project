@@ -14,36 +14,53 @@ Group 2:
 #include "dungeon.h"
 
 // Define the audio engine (Implemented by Derrehn)
-ma_engine engine;
+static ma_engine engine;
+static bool audioReady = false;
 
 int x = 0;
 int y = 0;
 
 char dungeon_platform[12][12];
 int health = 3;
+int playerX = 0;
+int playerY = 0;
 bool hitWall = false;
+
+//Starts game audio. Returns false if unable to start
+bool initializeAudio(void) {
+  audioReady = (ma_engine_init(NULL, &engine) == MA_SUCCESS);
+  return audioReady;
+}
+
+//Terminates game audio
+void shutdownAudio(void) {
+	if(audioReady) {
+	   ma_engine_uninit(&engine);
+	   audioReady = false;
+	}
+}
             
 
 // character positions ONLY
 
-int positionX(){
+int positionX(void){
     
    return (rand() % 10) + 1;
 }
 
-int positionY(){
+int positionY(void){
     
    return (rand() % 10) + 1;
 }
 
 
 
-void initializeDungeon(){
+void initializeDungeon(void){
 
         // The Grid itself with assets
         char blank_space = '.';
         char wall = '#';
-        char player = 'P'; 
+        char playerChar = 'P'; 
         char enemy = 'e';
         char item = '$';
         
@@ -69,7 +86,7 @@ void initializeDungeon(){
 
          playerX = 6;
          playerY = 6;
-         dungeon_platform[playerX][playerY] = player;
+         dungeon_platform[playerX][playerY] = playerChar;
         
         // NON-Randomized spawns start here, beware for mess!
 //------------------------------------------------------------------------------------
@@ -129,7 +146,7 @@ dungeon_platform[10][6] = item;
 
 
 //------------------------------------------------------------------------------
-void printDungeon(){
+void printDungeon(void){
     
     printf("\n");
     
