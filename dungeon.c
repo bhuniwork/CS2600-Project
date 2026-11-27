@@ -89,7 +89,7 @@ void initializeDungeon(void){
          dungeon_platform[playerX][playerY] = playerChar;
         
         // NON-Randomized spawns start here, beware for mess!
-//------------------------------------------------------------------------------------
+	
         //Vertical walls in the dungeon (longer than 2)
          for (int r = 0; r <= 2; r++){
             dungeon_platform[r][2] = wall;
@@ -125,7 +125,6 @@ void initializeDungeon(void){
         for (int c = 2; c <= 4; c++) {
             dungeon_platform[9][c] = wall;
         }
-//------------------------------------------------------------------------------
 //enemies and items spawn, refered to item and enemy classes
 
 //enemy spawnPoints
@@ -145,7 +144,6 @@ dungeon_platform[10][6] = item;
 }
 
 
-//------------------------------------------------------------------------------
 void printDungeon(void){
     
     printf("\n");
@@ -161,7 +159,6 @@ void printDungeon(void){
 }
 
 
-//-------------------------------------------------------------------------------
 void playerControl(char key){
     
     int tempRow = playerX;
