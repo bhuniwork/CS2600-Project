@@ -12,6 +12,9 @@ Group 2:
 #include <stdlib.h>
 #include <stdbool.h>
 #include "dungeon.h"
+#include "player.h"
+#include "Items.h"
+#include "enemy.h"
 
 // Define the audio engine (Implemented by Derrehn)
 static ma_engine engine;
@@ -25,11 +28,25 @@ int health = 3;
 int playerX = 0;
 int playerY = 0;
 bool hitWall = false;
+bool fightingEnemy = false;
 
 //Starts game audio. Returns false if unable to start
 bool initializeAudio(void) {
   audioReady = (ma_engine_init(NULL, &engine) == MA_SUCCESS);
   return audioReady;
+}
+
+void printAsciiArt(char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error opening file: %s\n", filename);
+        return;
+    }
+    char line[256];
+    while (fgets(line, sizeof(line), file)) {
+        printf("%s", line);
+    }
+    fclose(file);
 }
 
 //Terminates game audio
@@ -56,7 +73,8 @@ int positionY(void){
 
 
 void initializeDungeon(void){
-
+        //play game start sound effect
+        ma_engine_play_sound(&engine, "SoundClips/stone_push_medium.wav", NULL);
         // The Grid itself with assets
         char blank_space = '.';
         char wall = '#';
@@ -141,6 +159,7 @@ dungeon_platform[5][10] = item;
 dungeon_platform[10][8] = item;
 dungeon_platform[10][6] = item;
 
+
 }
 
 
@@ -148,51 +167,104 @@ void printDungeon(void){
     
     printf("\n");
     
+    if (fightingEnemy){
+        printAsciiArt("AsciiGrapics/dragon.txt");
+        printf("------------------------\n");
+        printf("What will you do?\n");
+        printf("1. Attack\n");
+        printf("2. Use Item\n");
+        printf("Enter Q to quit\n");
+    
+    } else {
     for (int r = 0; r < 12; r++){
         for (int c = 0; c < 12; c++){
             printf("%c ", dungeon_platform[r][c]);
             }
         printf("\n");
         }
-            
-    printf("---------------------\n");
+        printf("------------------------\n");
+        printf("Enter Q to quit\n");
+        printf("Enter W A S D to move ");
+    }        
+    
 }
 
 
-void playerControl(char key){
+void playerControl(char key, player *p1){
     
     int tempRow = playerX;
     int tempCol = playerY;
     
     if (key == 'W' || key == 'w'){
-        ma_engine_play_sound(&engine, "SoundClips/foley_footstep_concrete_1.wav", NULL);
         tempRow--;
     } else if (key == 'A' || key == 'a'){
-        ma_engine_play_sound(&engine, "SoundClips/foley_footstep_vinyl_4.wav", NULL);
         tempCol--;
     } else if (key == 'S' || key == 's'){
-        ma_engine_play_sound(&engine, "SoundClips/foley_footstep_concrete_1.wav", NULL);
         tempRow++;
     } else if (key == 'D' || key == 'd'){
-        ma_engine_play_sound(&engine, "SoundClips/foley_footstep_vinyl_4.wav", NULL);
         tempCol++;
     } else {
         return;
     }
     
-    //Player movement here (Centered)
-    if (dungeon_platform[tempRow][tempCol] != '#' && dungeon_platform[tempRow][tempCol] != 'e'){
-        
+    //Player movement here (Centered) 
+    //&& dungeon_platform[tempRow][tempCol] != 'e' removed to allow player to encounter enemy
+    if (dungeon_platform[tempRow][tempCol] != '#' && !fightingEnemy){
+         //Play sound effect for item collection
+        if (dungeon_platform[tempRow][tempCol] == '$'){
+            //player collects and item
+            ma_engine_play_sound(&engine, "SoundClips/coin_collect.wav", NULL);
+            Items item = getRandomItem();
+            printf("\n!!Collected an item: %s!!\n", item.name);
+            addPlayerItem(p1, item);
+        } else if (dungeon_platform[tempRow][tempCol] == 'e'){
+            //player encounters an enemy
+            ma_engine_play_sound(&engine, "SoundClips/weapon_pick_up.wav", NULL);
+            printf("\n!!Encountered an enemy!!\n");
+            fightingEnemy = true;
+            Enemy grunt = {.name = "James", .health = 0, .damage = 4, .type="Grunt"};
+            
+            
+        } else {
+            //play movement sound effect different for direction
+            if(key == 'W' || key == 'w'){
+                ma_engine_play_sound(&engine, "SoundClips/foley_footstep_vinyl_4.wav", NULL);
+            } else if (key == 'A' || key == 'a'){
+                ma_engine_play_sound(&engine, "SoundClips/foley_footstep_vinyl_3.wav", NULL);
+            } else if (key == 'S' || key == 's'){
+                ma_engine_play_sound(&engine, "SoundClips/foley_footstep_vinyl_4.wav", NULL);
+            } else if (key == 'D' || key == 'd'){
+                ma_engine_play_sound(&engine, "SoundClips/foley_footstep_vinyl_3.wav", NULL);
+            }
+           
+        }
         dungeon_platform[playerX][playerY] = '.';
         playerX = tempRow;
         playerY = tempCol;
         dungeon_platform[playerX][playerY] = 'P';
+       
+        
 
     } else if (dungeon_platform[tempRow][tempCol] == '#'){
         
-        ma_engine_play_sound(&engine, "SoundClips/foley_footstep_vinyl_3.wav", NULL);
+        ma_engine_play_sound(&engine, "SoundClips/cancel.wav", NULL);
         printf("\n!!Hit a wall!!\n");
         
     }
 
+}
+
+void UIGameStart(void){
+    
+    printf("Welcome to the Insert Game Name!\n");
+    printf("Instructions:\n");
+    printf("Use W A S D keys to move your character through the dungeon (Marked by P)\n");
+    printf("Collect items($) and avoid enemies (e).\n");
+    printf("Press Q to quit the game at any time.\n");
+    printf("Good luck and have fun!\n");
+    printf("Enter S to start the game...\n");
+    char key;
+    while(scanf(" %c", &key) == 1 && key != 'S') {
+        UIGameStart();
+    }
 }
