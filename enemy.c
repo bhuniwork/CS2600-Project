@@ -10,23 +10,8 @@ Group 2:
 #include <stdio.h>
 #include <stdbool.h>
 #include "player.h"
-typedef struct {
-  char * name;
-  // health measure the CURRENT health of the enemy. Does NOT have to be equal to maxHealth
-  int health;
-  // maxHealth measures the total health of the enemy
-  int maxHealth;
-  // This measures HOW MUCH damage an enemy can deal to a player
-  // (Ex: if damage was the integer 5, an enemy can deal 5 damage to the player.)
-  int damage;
-  char * type;
-} Enemy;
+#include "enemy.h"
 
-typedef struct {
-  Enemy boss;
-  int bounty;
-  int specialDamage;
-} Boss;
 
 char *getName(Enemy *self) {
   return self->name;
@@ -47,7 +32,19 @@ char *getType(Enemy *self) {
 // This method checks if an enemy's health is 0.
 bool isDefeated(Enemy *self) {
   // REMEMBER: a returned value of 0 means FALSE while 1 MEANS TRUE.
-  return self->health == 0;
+  return self->health <= 0;
+}
+
+//Function that allows enemy to take damage by player. Ensures enemy health can never be less than 0.
+void takeDamage(Enemy *self, int amount) {
+	if(amount < 0) {
+		return;
+	}
+
+	self->health -= amount;
+	if(self->health < 0) {
+		self->health = 0;
+	}
 }
 
 void resetHealth(Enemy *self) {

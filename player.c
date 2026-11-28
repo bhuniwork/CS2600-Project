@@ -11,6 +11,7 @@ Group 2:
 #include <string.h>
 #include "player.h"
 #include "Items.h"
+#include "enemy.h"
 
 static const Items placeholderItem = { .name = "Placeholder" };
 static const Items placeholderWeapon = { .name = "Undefined" };
@@ -28,6 +29,7 @@ void playerDefaultConfiguration(player* player) {
 	player->index=0;
 	player->playerDamage = 30;
 	player->playerWeapon = placeholderWeapon;
+	player->turnState = TURN_WAITING;
 	fillPlayerItemsPlaceholderValues(player);
 }
 
@@ -95,4 +97,139 @@ void removePlayerItem(player* player, Items *item) {
 		}
 	}
 }
+
+//Ensures player is alive
+bool isPlayerAlive(player* player) {
+	return player->playerHealth > 0;
+}
+
+//Allows player to take damage by enemy and checks after whether the health is a negative number and if so, sets it to zero.
+void playerTakeDamage(player *player, int amount) {
+	if(amount < 0) {
+		return;
+	}
+	player->playerHealth -= amount;
+	if(player->playerHealth < 0) {
+		player->playerHealth = 0;
+	}
+}
+
+//Calculates the amount of damage a player does from its player damage plus the player's weapon damage
+int getPlayerAttackDamage(player* player) {
+	return player->playerDamage + (int) player->playerWeapon.weapon.damage;
+}
+
+//Display's player's current HP, whether they are alive, and their damage
+void displayPlayerStatus(player* player) {
+	printf("--- Player Status ---\n");
+	printf("HP: %d (%s)\n", player->playerHealth, isPlayerAlive(player) ? "alive" : "defeated");
+
+	if(strcmp(player->playerWeapon.name, "Undefined") == 0) {
+		printf("Attack %d (no weapon equipped)\n" , getPlayerAttackDamage(player));
+	} else {
+	   printf("Attack: %d base + %d from %s = %d\n", player->playerDamage, (int) player->playerWeapon.weapon.damage, player->playerWeapon.name, getPlayerAttackDamage(player));
+	}
+}
+
+//Checks whether player is alive and that it is their turn before they can make an action.
+bool canPlayerAct(player* player) {
+	return isPlayerAlive(player) && player->turnState == TURN_ACTIVE;
+}
+
+//Checks whether player is waiting for enemy to make its turn.
+bool isPlayerWaitingForEnemy(player* player) {
+	return player->turnState == TURN_WAITING;
+}
+
+//Gives player ability to take their turn. Calls this function at start of a battle and when the enemy has finished their turn.
+void startPlayerTurn(player* player) {
+   if(isPlayerAlive(player)) {
+	   player->turnState = TURN_ACTIVE;
+   }
+}
+
+//Ends player turn and makes player wait for next turn.
+void endPlayerTurn(player* player) {
+	player->turnState = TURN_WAITING;
+}
+
+static bool requireTurn(player* player) {
+	if(!isPlayerAlive(player)) {
+		printf("You are out of turns, you have been slained by the enemy\n");
+		return false;
+	}
+	if(player->turnState != TURN_ACTIVE) {
+		printf("It isn't your turn yet.\n");
+		return false;
+	}
+	return true;
+}
+//Function that allows player to attack enemy. First ensures the move is allowed, then attacks the enemy. If enemy is defeated, the program acknowledges it
+ActionResult playerAttack(player* player, Enemy *target) {
+	if(target == NULL || !requireTurn(player)) {
+		return ACTION_NOT_ALLOWED;
+	}
+
+	if(isDefeated(target)) {
+	    printf("That enemy has been slained!\n");
+	    return ACTION_NOT_ALLOWED;
+	   }
+
+	char *name = getName(target) != NULL ? getName(target) : "the enemy";
+	int damage = getPlayerAttackDamage(player);
+	takeDamage(target, damage);
+	printf("You attacked %s for %d damage. Enemy HP: %d/%d\n", name, damage, getHealth(target), target->maxHealth);
+
+	ActionResult result = ACTION_DONE;
+	if(isDefeated(target)) {
+		printf("%s has been slained!\n" , name);
+		result = ACTION_ENEMY_DEFEATED;
+       }
+
+       displayPlayerStatus(player);
+       endPlayerTurn(player);
+       return result;
+} 
+
+//Allows player to use item. Checks to see if action is allowed and then consumes the item if it exists within the player's inventory. Then fills that slot with a placeholder value.
+ActionResult playerUseItem(player* player, int slot) {
+	if(!requireTurn(player)) {
+		return ACTION_NOT_ALLOWED;
+	}
+
+	if(slot < 0 || slot >= player->index || strcmp(player->playerItems[slot].name, "Placeholder") == 0) {
+		printf("There is no item in the slot.\n");
+		return ACTION_NOT_ALLOWED;
+	}
+
+	Items *item = &player->playerItems[slot];
+	int amount = item->healingItem.healingAmount;
+	if(amount == 0) {
+		printf("%s can't be sued right now.\n" , item->name);
+		return ACTION_NOT_ALLOWED;
+	}
+
+	printf("You used %s. ", item->name);
+	if(amount > 0) {
+		printf("You recovered %d HP. \n", amount);
+	} else {
+	  printf("You lost %d HP.\n", -amount);
+      }
+
+	player->playerHealth += amount;
+	if(player->playerHealth < 0) {
+		player->playerHealth = 0;
+	}
+
+	player->playerItems[slot] = placeholderItem;
+
+	displayPlayerStatus(player);
+	endPlayerTurn(player);
+	return ACTION_DONE;
+}
+
+
+
+
+
 
