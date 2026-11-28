@@ -2,6 +2,7 @@
 #define DUNGEON
 
 #include <stdbool.h>
+#include "player.h"
 
 bool initializeAudio(void);
 void shutdownAudio(void);
@@ -13,7 +14,9 @@ int positionX(void); //- returns a random position X
 int positionY(void); //- returns a random position Y
 void initializeDungeon(void); //- returns a 2D array of blank spaces and a border
 void printDungeon(void); //- returns a dungeon with randomized item, walls, enemies, and centered player
-void playerControl(char key); //- method determines player movement, where movement is represented by "WASD" and returns a dungeon with that new movement modification. Key represents WASD
+void printAsciiArt(char *filename); //- returns an ascii art of enemy
+void playerControl(char key, player *p); //- method determines player movement, where movement is represented by "WASD" and returns a dungeon with that new movement modification. Key represents WASD
+void UIGameStart(void); //- returns a UI for the game start, with instructions and a title  
 
 /*
 //Local variables
