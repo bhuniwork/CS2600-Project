@@ -40,5 +40,6 @@ extern int health; //- Health of the player (initial: 100, subject to change)
 extern int playerX; //- gives the center X of the player in the dungeon
 extern int playerY; //- gives the center Y of the player in the dungeon
 extern bool hitWall; //- returns true if player hits '#' character.
+extern bool fightingEnemy; //Evaluates to true whenever player is engaged with the enemy.
 
 #endif

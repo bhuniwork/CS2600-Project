@@ -205,7 +205,7 @@ ActionResult playerUseItem(player* player, int slot) {
 	Items *item = &player->playerItems[slot];
 	int amount = item->healingItem.healingAmount;
 	if(amount == 0) {
-		printf("%s can't be sued right now.\n" , item->name);
+		printf("%s can't be used right now.\n" , item->name);
 		return ACTION_NOT_ALLOWED;
 	}
 

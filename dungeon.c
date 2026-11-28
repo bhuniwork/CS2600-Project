@@ -256,7 +256,7 @@ void playerControl(char key, player *p1){
 
 void UIGameStart(void){
     
-    printf("Welcome to the Insert Game Name!\n");
+    printf("Welcome to ASCII DUNGEON!\n");
     printf("Instructions:\n");
     printf("Use W A S D keys to move your character through the dungeon (Marked by P)\n");
     printf("Collect items($) and avoid enemies (e).\n");
